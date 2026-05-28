@@ -1,0 +1,28 @@
+name: Save JSON Exporter Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  save-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Pull JSON Exporter Image
+        run: docker pull --platform linux/arm64 quay.io/prometheuscommunity/json-exporter:v0.7.0
+
+      - name: Save JSON Exporter Image as tar
+        run: docker save quay.io/prometheuscommunity/json-exporter:v0.7.0 -o json_exporter-arm64.tar
+
+      - name: Upload tar file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: json_exporter-arm64
+          path: json_exporter-arm64.tar
+
