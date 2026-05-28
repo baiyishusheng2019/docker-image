@@ -1,0 +1,27 @@
+name: Save Postgres Exporter Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  save-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Pull Postgres Exporter Image
+        run: docker pull --platform linux/arm64 prometheuscommunity/postgres-exporter:v0.15.0
+
+      - name: Save Postgres Exporter Image as tar
+        run: docker save prometheuscommunity/postgres-exporter:v0.15.0 -o postgres_exporter-arm64.tar
+
+      - name: Upload tar file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgres_exporter-arm64
+          path: postgres_exporter-arm64.tar
